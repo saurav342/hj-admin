@@ -1,5 +1,8 @@
 // API service for HappyJobs Admin Dashboard
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+// In development, use Vite proxy (/api)
+// In production, use the actual backend API URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
+  (import.meta.env.DEV ? '/api' : 'http://ec2-16-176-22-21.ap-southeast-2.compute.amazonaws.com:3000/api');
 
 class ApiService {
   constructor() {
@@ -27,6 +30,16 @@ class ApiService {
       return await response.json();
     } catch (error) {
       console.error('API request failed:', error);
+      
+      // Provide more helpful error messages
+      if (error.message.includes('Unexpected token')) {
+        throw new Error('API server is not responding correctly. Please check if the backend server is running and accessible.');
+      }
+      
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        throw new Error('Unable to connect to API server. Please check your network connection and API configuration.');
+      }
+      
       throw error;
     }
   }
