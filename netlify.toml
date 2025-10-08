@@ -2,6 +2,14 @@
   command = "npm run build"
   publish = "dist"
 
+# API proxy redirects to handle mixed content issue
+[[redirects]]
+  from = "/api/*"
+  to = "http://ec2-16-176-22-21.ap-southeast-2.compute.amazonaws.com:3000/api/:splat"
+  status = 200
+  force = true
+
+# Catch-all redirect for SPA
 [[redirects]]
   from = "/*"
   to = "/index.html"
@@ -10,4 +18,5 @@
 [build.environment]
   NODE_VERSION = "18"
   # Set your production API URL here
-  VITE_API_BASE_URL = "http://ec2-16-176-22-21.ap-southeast-2.compute.amazonaws.com:3000/api"
+  # Using Netlify redirects to proxy API requests
+  VITE_API_BASE_URL = "/api"
